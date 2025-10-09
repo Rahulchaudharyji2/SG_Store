@@ -1,0 +1,77 @@
+/* Toggle center */
+.toggle-container {
+  text-align: center;
+  margin: 10px 0;
+}
+
+/* Banner section */
+.banner-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 20px auto;
+  gap: 16px;
+}
+
+.banner-img {
+  max-width: 350px;
+  width: 100%;
+  border-radius: 16px;
+  object-fit: contain;
+  transition: transform 0.3s ease-in-out;
+}
+
+.banner-img:hover {
+  transform: scale(1.05);
+}
+
+/* Section title */
+.section-title {
+  text-align: center;
+  margin-top: 40px;
+  font-weight: bold;
+  font-size: 28px;
+}
+
+/* Product grid */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 20px;
+}
+
+/* 📱 Responsive Tweaks */
+@media (max-width: 1024px) {
+  .banner-img {
+    max-width: 280px;
+  }
+  .section-title {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .banner-section {
+    gap: 12px;
+  }
+  .banner-img {
+    max-width: 200px;
+  }
+  .section-title {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .banner-section {
+    flex-direction: column;
+  }
+  .banner-img {
+    max-width: 100%;
+  }
+  .section-title {
+    font-size: 18px;
+  }
+}

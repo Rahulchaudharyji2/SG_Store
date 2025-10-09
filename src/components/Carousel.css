@@ -1,0 +1,54 @@
+.carousel-wrapper {
+  margin: 18px 50px;
+  border-radius: 12px;
+}
+
+/* Image styles */
+.carousel-img {
+  height: 90vh;
+  border-radius: 20px;
+  border: 2px solid black;
+  object-fit: cover;
+}
+
+/* ✅ Tablet view */
+@media (max-width: 1024px) {
+  .carousel-wrapper {
+    margin: 15px 30px;
+  }
+  .carousel-img {
+    height: 65vh;
+    border-radius: 16px;
+  }
+}
+
+/* ✅ Mobile view */
+@media (max-width: 768px) {
+  .carousel-wrapper {
+    margin: 10px 15px;
+  }
+  .carousel-img {
+    height: 40vh;
+    border-radius: 12px;
+  }
+  .carousel-caption h3 {
+    font-size: 16px;
+  }
+  .carousel-caption p {
+    font-size: 13px;
+  }
+}
+
+/* ✅ Extra small devices */
+@media (max-width: 480px) {
+  .carousel-img {
+    height: 30vh;
+    border-radius: 10px;
+  }
+  .carousel-caption h3 {
+    font-size: 14px;
+  }
+  .carousel-caption p {
+    font-size: 12px;
+  }
+}
