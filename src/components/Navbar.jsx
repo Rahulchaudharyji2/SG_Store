@@ -1,3 +1,5 @@
+
+
 import * as React from "react";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
@@ -13,30 +15,28 @@ import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import Button from "@mui/material/Button";
-import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import Modal from "@mui/material/Modal";
 import CloseIcon from "@mui/icons-material/Close";
 import TextField from "@mui/material/TextField";
 import Select from "@mui/material/Select";
-import { MenuItem as SelectItem } from "@mui/material";
-import { Link } from "react-router-dom";
+import { MenuItem as SelectItem, CircularProgress, Paper, Divider } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../Context/CardContext";
+import { useSelector } from "react-redux";
+
+// Resolve API base: prefer VITE_API_URL, else use /api (with Vite proxy)
+const API_BASE = (import.meta.env.VITE_API_URL && String(import.meta.env.VITE_API_URL).replace(/\/+$/, "")) || "/api";
 
 // Styled search components
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
   backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
+  "&:hover": { backgroundColor: alpha(theme.palette.common.white, 0.25) },
   marginLeft: 0,
   width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(3),
-    width: "auto",
-  },
+  [theme.breakpoints.up("sm")]: { marginLeft: theme.spacing(3), width: "auto" },
 }));
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
@@ -56,9 +56,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
     width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch",
-    },
+    [theme.breakpoints.up("md")]: { width: "20ch" },
   },
 }));
 
@@ -114,12 +112,7 @@ const DeliveryModal = ({ open, handleClose }) => {
               India
             </SelectItem>
           </Select>
-          <TextField
-            fullWidth
-            label="Pincode / Location"
-            variant="outlined"
-            sx={{ width: "60%", borderRadius: "8px" }}
-          />
+          <TextField fullWidth label="Pincode / Location" variant="outlined" sx={{ width: "60%", borderRadius: "8px" }} />
         </Box>
         <Button
           variant="contained"
@@ -142,22 +135,97 @@ const DeliveryModal = ({ open, handleClose }) => {
 
 // Main Navbar
 export default function PrimarySearchAppBar() {
+  const navigate = useNavigate();
   const { cart } = useCart();
   const cartNo = cart.length;
 
+  // Auth state
+  const { isAuthenticated, user } = useSelector((s) => s.auth || {});
+  const isAdmin = Boolean(isAuthenticated && user?.role === "admin");
+
+  // Menus and modal
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [openModal, setOpenModal] = React.useState(false);
-
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   const handleProfileMenuOpen = (event) => setAnchorEl(event.currentTarget);
   const handleMobileMenuClose = () => setMobileMoreAnchorEl(null);
-  const handleMenuClose = () => { setAnchorEl(null); handleMobileMenuClose(); };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    handleMobileMenuClose();
+  };
   const handleMobileMenuOpen = (event) => setMobileMoreAnchorEl(event.currentTarget);
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
+
+  // Search states
+  const [q, setQ] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const [results, setResults] = React.useState([]);
+  const [openResults, setOpenResults] = React.useState(false);
+  const searchBoxRef = React.useRef(null);
+  const debounceRef = React.useRef(null);
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setQ(value);
+    if (!openResults) setOpenResults(true);
+  };
+
+  const handleResultClick = (id) => {
+    setOpenResults(false);
+    setQ("");
+    setResults([]);
+    navigate(`/productDetails/${id}`);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e?.preventDefault?.();
+    // If there are results, navigate to the first one; otherwise, just keep dropdown
+    if (results && results.length > 0) {
+      handleResultClick(results[0]._id);
+    }
+  };
+
+  // Click outside to close results
+  React.useEffect(() => {
+    const onDocClick = (e) => {
+      if (!searchBoxRef.current) return;
+      if (!searchBoxRef.current.contains(e.target)) {
+        setOpenResults(false);
+      }
+    };
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, []);
+
+  // Debounced search
+  React.useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (!q || q.trim().length < 2) {
+      setResults([]);
+      setLoading(false);
+      return;
+    }
+    debounceRef.current = setTimeout(async () => {
+      try {
+        setLoading(true);
+        const url = `${API_BASE}/products?q=${encodeURIComponent(q.trim())}&limit=10`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Search failed: ${res.status}`);
+        const data = await res.json();
+        setResults(Array.isArray(data?.products) ? data.products : []);
+      } catch (err) {
+        console.error("Search error:", err);
+        setResults([]);
+      } finally {
+        setLoading(false);
+      }
+    }, 350);
+    return () => clearTimeout(debounceRef.current);
+  }, [q]);
 
   // Desktop menu
   const menuId = "primary-search-account-menu";
@@ -171,8 +239,16 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      {isAdmin ? (
+        <>
+          <MenuItem component={Link} to="/admin/profile" onClick={handleMenuClose}>Admin Profile</MenuItem>
+          <MenuItem component={Link} to="/admin/products" onClick={handleMenuClose}>Add Product</MenuItem>
+        </>
+      ) : (
+        <>
+          <MenuItem component={Link} to="/admin/login" onClick={handleMenuClose}> Admin Login</MenuItem>
+        </>
+      )}
     </Menu>
   );
 
@@ -193,8 +269,16 @@ export default function PrimarySearchAppBar() {
           Where to deliver?
         </Button>
       </MenuItem>
-      
-      <MenuItem component={Link} to="/cart">
+
+      {isAdmin && (
+        <MenuItem component={Link} to="/admin/products" onClick={handleMobileMenuClose}>
+          <Button variant="outlined" fullWidth sx={{ borderRadius: 2 }}>
+            Add Product
+          </Button>
+        </MenuItem>
+      )}
+
+      <MenuItem component={Link} to="/cart" onClick={handleMobileMenuClose}>
         <IconButton size="large" color="inherit">
           <Badge badgeContent={cartNo} color="error">
             <ShoppingCartOutlinedIcon />
@@ -202,88 +286,192 @@ export default function PrimarySearchAppBar() {
         </IconButton>
         <p>Cart</p>
       </MenuItem>
+
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton size="large" color="inherit">
           <AccountCircle />
         </IconButton>
-        <p>Profile</p>
+        <p>{isAdmin ? "Admin" : "Profile"}</p>
       </MenuItem>
     </Menu>
   );
 
   return (
     <>
-    
-    <Box sx={{ flexGrow: 1 ,marginBottom:"85px"}} >
-      <AppBar position="fixed" sx={{ backgroundColor: "#EBCB90" }}>
-        <Toolbar sx={{ flexWrap: "wrap", justifyContent: "space-between" }}>
-          {/* Logo (Always visible) */}
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Typography component={Link} to="/" sx={{ display: "block" }}>
-              <img
-                src="logo.jpg"
-                alt="Logo"
-                style={{
-                  height: window.innerWidth < 600 ? "40px" : "50px",
-                  borderRadius: "12px",
+      <Box sx={{ flexGrow: 1, marginBottom: "85px" }}>
+        <AppBar position="fixed" sx={{ backgroundColor: "#EBCB90" }}>
+          <Toolbar sx={{ flexWrap: "wrap", justifyContent: "space-between" }}>
+            {/* Logo */}
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Typography component={Link} to="/" sx={{ display: "block" }}>
+                <img
+                  src="./logo.jpg"
+                  alt="Logo"
+                  style={{
+                    height: typeof window !== "undefined" && window.innerWidth < 600 ? "40px" : "50px",
+                    borderRadius: "12px",
+                  }}
+                />
+              </Typography>
+            </Box>
+
+            {/* Search (with results dropdown) */}
+            <Box ref={searchBoxRef} sx={{ position: "relative", flex: 1, maxWidth: { xs: "60%", md: "40vw" }, mx: 2 }}>
+              <form onSubmit={handleSearchSubmit}>
+                <Search sx={{ borderRadius: "20px", width: "100%", border: "solid black" }}>
+                  <SearchIconWrapper>
+                    <SearchIcon sx={{ color: "#37353E" }} />
+                  </SearchIconWrapper>
+                  <StyledInputBase
+                    placeholder="Search…"
+                    inputProps={{ "aria-label": "search" }}
+                    value={q}
+                    onChange={handleSearchChange}
+                    onFocus={() => q.trim().length >= 2 && setOpenResults(true)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Escape") setOpenResults(false);
+                    }}
+                  />
+                </Search>
+              </form>
+
+              {/* Results dropdown */}
+              {openResults && (
+                <Paper
+                  elevation={6}
+                  sx={{
+                    position: "absolute",
+                    top: "54px",
+                    left: 0,
+                    right: 0,
+                    zIndex: 1300,
+                    maxHeight: 360,
+                    overflowY: "auto",
+                    borderRadius: 2,
+                  }}
+                >
+                  <Box sx={{ p: 1.5, display: "flex", alignItems: "center", gap: 1 }}>
+                    <SearchIcon fontSize="small" />
+                    <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                      Results for “{q}”
+                    </Typography>
+                    {loading && <CircularProgress size={16} sx={{ ml: "auto" }} />}
+                  </Box>
+                  <Divider />
+                  <Box>
+                    {!loading && results.length === 0 && q.trim().length >= 2 ? (
+                      <Typography variant="body2" sx={{ p: 2, color: "text.secondary" }}>
+                        No results found
+                      </Typography>
+                    ) : (
+                      results.map((p) => (
+                        <Box
+                          key={p._id}
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1.5,
+                            p: 1.25,
+                            cursor: "pointer",
+                            "&:hover": { backgroundColor: alpha("#000", 0.04) },
+                          }}
+                          onClick={() => handleResultClick(p._id)}
+                        >
+                          <img
+                            src={Array.isArray(p.images) && p.images[0] ? p.images[0] : ""}
+                            alt=""
+                            style={{ width: 44, height: 44, objectFit: "cover", borderRadius: 6, background: "#f5f5f5" }}
+                          />
+                          <Box sx={{ minWidth: 0 }}>
+                            <Typography variant="body2" noWrap title={p.title}>
+                              {p.title}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: "text.secondary" }} noWrap title={p.category}>
+                              {p.category} • ₹{p.price}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      ))
+                    )}
+                  </Box>
+                </Paper>
+              )}
+            </Box>
+
+            <Box sx={{ flexGrow: 1 }} />
+
+            {/* Desktop actions */}
+            <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}>
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  backgroundColor: "#EBCB90",
+                  color: "#37353E",
+                  marginRight: 1,
+                  padding: "8px 16px",
+                  fontWeight: "bold",
+                  boxShadow: "none",
+                  border: "1px solid #37353E",
+                  "&:hover": { border: "1px solid #37353E", boxShadow: "none" },
                 }}
-              />
-            </Typography>
-          </Box>
+                onClick={handleOpenModal}
+              >
+                <img src="https://flagcdn.com/in.svg" alt="Indian flag" style={{ width: "24px", marginRight: "8px" }} />
+                <span style={{ backgroundColor: "#fff", padding: "4px 8px", borderRadius: "10px" }}>
+                  Where to deliver?
+                </span>
+              </Button>
 
-          {/* Search */}
-          <Search sx={{ borderRadius: "20px", width: { xs: "60%", md: "40vw" }, border: "solid black", mx: 2 }}>
-            <SearchIconWrapper><SearchIcon sx={{ color: "#37353E" }} /></SearchIconWrapper>
-            <StyledInputBase placeholder="Search…" inputProps={{ "aria-label": "search" }} />
-          </Search>
+              {/* Admin-only: Add Product */}
+              {isAdmin && (
+                <Button
+                  component={Link}
+                  to="/admin/products"
+                  variant="outlined"
+                  sx={{
+                    borderRadius: "20px",
+                    color: "#37353E",
+                    borderColor: "#37353E",
+                    ml: 1,
+                    fontWeight: "bold",
+                    "&:hover": { borderColor: "#37353E" },
+                  }}
+                >
+                  Add Product
+                </Button>
+              )}
 
-          <Box sx={{ flexGrow: 1 }} />
+              <IconButton size="large" color="inherit" component={Link} to="/cart" sx={{ ml: 2 }}>
+                <Badge badgeContent={cartNo} color="error">
+                  <ShoppingCartOutlinedIcon />
+                </Badge>
+              </IconButton>
+              <IconButton size="large" edge="end" color="inherit" onClick={handleProfileMenuOpen} sx={{ ml: 2 }}>
+                <AccountCircle />
+              </IconButton>
+            </Box>
 
-          {/* Desktop icons */}
-          <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}>
-            <Button
-              variant="contained"
-              sx={{
-                borderRadius: "20px",
-                backgroundColor: "#EBCB90",
-                color: "#37353E",
-                marginRight: 1,
-                padding: "8px 16px",
-                fontWeight: "bold",
-                boxShadow: "none",
-                border: "1px solid #37353E",
-                "&:hover": { border: "1px solid #37353E", boxShadow: "none" },
-              }}
-              onClick={handleOpenModal}
-            >
-              <img src="https://flagcdn.com/in.svg" alt="Indian flag" style={{ width: "24px", marginRight: "8px" }} />
-              <span style={{ backgroundColor: "#fff", padding: "4px 8px", borderRadius: "10px" }}>
-                Where to deliver?
-              </span>
-            </Button>
-            
-            <IconButton size="large" color="inherit" component={Link} to="/cart" sx={{ ml: 2 }}>
-              <Badge badgeContent={cartNo} color="error"><ShoppingCartOutlinedIcon /></Badge>
-            </IconButton>
-            <IconButton size="large" edge="end" color="inherit" onClick={handleProfileMenuOpen} sx={{ ml: 2 }}>
-              <AccountCircle />
-            </IconButton>
-          </Box>
+            {/* Mobile menu button */}
+            <Box sx={{ display: { xs: "flex", md: "none" } }}>
+              <IconButton
+                size="large"
+                aria-label="show more"
+                aria-controls={mobileMenuId}
+                aria-haspopup="true"
+                onClick={handleMobileMenuOpen}
+              >
+                <MoreIcon />
+              </IconButton>
+            </Box>
+          </Toolbar>
+        </AppBar>
 
-          {/* Mobile menu button */}
-          <Box sx={{ display: { xs: "flex", md: "none" } }}>
-            <IconButton size="large" aria-label="show more" aria-controls={mobileMenuId} aria-haspopup="true" onClick={handleMobileMenuOpen}>
-              <MoreIcon />
-            </IconButton>
-          </Box>
-        </Toolbar>
-      </AppBar>
-
-      {/* Menus and Modal */}
-      {renderMobileMenu}
-      {renderMenu}
-      <DeliveryModal open={openModal} handleClose={handleCloseModal} />
-    </Box>
+        {/* Menus and Modal */}
+        {renderMobileMenu}
+        {renderMenu}
+        <DeliveryModal open={openModal} handleClose={handleCloseModal} />
+      </Box>
     </>
   );
 }

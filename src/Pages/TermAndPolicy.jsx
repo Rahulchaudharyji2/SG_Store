@@ -143,6 +143,7 @@ const TermsAndPolicyPage = () => {
           </li>
         </ul>
 
+
         <p style={styles.paragraph}>
           We strongly recommend{" "}
           <strong style={{ color: "#007bff" }}>
@@ -207,6 +208,42 @@ const TermsAndPolicyPage = () => {
           </li>
           <li>
             	After the 3-day period, refunds will not be issued under any circumstances.
+          </li>
+        </ul>
+        <h3 style={styles.subSectionTitle}>Order Cancellation & COD Policy</h3>
+                <ul style={styles.list}>
+          <li style={styles.listItem}>
+           {" "}
+            Strict No-Return for COD Abuse
+{" "}
+            <strong style={styles.highlight}>
+              In case a customer places an order using Cash on Delivery (COD) and then cancels it at the last moment, such behavior will be considered an abuse of service. If this happens again, we reserve the right to refuse accepting any future orders from that customer.
+
+            </strong>
+          </li>
+          <li style={styles.listItem}>
+            <strong style={styles.successHighlight}>
+             Penalty for COD Cancellations
+
+            </strong>{" "}
+            If a COD order is cancelled at the delivery stage (i.e. after dispatch), a non-refundable penalty of ₹99 will be levied and deducted from any refund or retained as a service charge.
+{" "}
+            <strong style={styles.successHighlight}>
+              Prepaid Orders – Replacement / Refund Only
+
+            </strong>{" "}
+            For prepaid orders, cancellations or returns may be allowed under our regular return / refund policy. However, we shall not accept abrupt cancellations at the doorstep or during delivery. Any refund or replacement must go through the standard process and is subject to our policy terms.
+
+          </li>
+          <li style={styles.listItem}>
+            <strong style={styles.successHighlight}>
+             Respectful Conduct Expected
+
+
+            </strong>{" "}
+            We expect all customers to treat delivery personnel courteously. Any form of misbehavior or verbal abuse toward our delivery partners will be taken seriously, and we reserve the right to refuse service in the future in such cases.
+{" "}
+
           </li>
         </ul>
 

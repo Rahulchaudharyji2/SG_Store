@@ -52,7 +52,7 @@ const App = () => {
 
                         {/* Content Block 2 */}
                         <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-                            Whether it’s shimmering jewellery that captures your love, a soft toy that feels like a warm embrace, a photo frame preserving a memory turned dear, or a bouquet of flowers that speaks in colour, each gift in our collection is picked with tenderness and passion.
+                            Whether it’s shimmering jewellery that captures your love, a soft toy that feels like a warm embrace,  each gift in our collection is picked with tenderness and passion.
                         </p>
 
                         {/* Content Block 3: The Mission Statement */}

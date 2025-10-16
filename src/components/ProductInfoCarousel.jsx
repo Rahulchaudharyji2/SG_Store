@@ -18,7 +18,7 @@ function ProdoctCarousel({ img1, img2 }) {
               alt={`Slide ${idx + 1}`}
             />
             <Carousel.Caption>
-              <button className="shop-button">Shop Now</button>
+             
             </Carousel.Caption>
           </Carousel.Item>
         ))}

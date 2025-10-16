@@ -15,8 +15,8 @@ const SG_GIFTS_PRODUCTS = {
     'privacy': "We collect contact info (name, address, email) for orders and support. Interactions via our **24/7 chatbot** or **WhatsApp** may collect conversation history to ensure the best service, handled in accordance with our Privacy Policy.",
     'jewelry': "Our **Jewelry** collection features elegant necklaces, bracelets, and rings, perfect for any special occasion. Explore our **premium gold** and **diamond** pieces.",
     'soft toys': "The **Soft Toys** range includes high-quality, hypoallergenic plush animals and custom gift bundles, ideal for cherished moments and gifts for children.",
-    'photo frames': "Our **Photo Frames** allow you to beautifully display memories, offering both classic wooden elegance and modern personalized gold-accented designs.",
-    'flowers': "We offer a selection of fresh, luxurious floral arrangements and preserved **Eternal Roses** for lasting beauty. Please specify the delivery date!",
+    //'photo frames': "Our **Photo Frames** allow you to beautifully display memories, offering both classic wooden elegance and modern personalized gold-accented designs.",
+    //'flowers': "We offer a selection of fresh, luxurious floral arrangements and preserved **Eternal Roses** for lasting beauty. Please specify the delivery date!",
     // --- UPDATED SHIPPING TEXT ---
     'shipping': "Delivery typically takes **1-2 days**. If your location is within **10 km**, we’ll deliver within the **same day**! If there’s ever a delay, contact us on **WhatsApp Business for instant help**.",
     // ----------------------------

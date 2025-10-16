@@ -75,3 +75,116 @@
     font-size: 18px;
   }
 }
+
+/* Subtle spacing just around the products section (keeps your existing UI intact) */
+.home-products {
+  padding: 8px 0 24px;
+}
+
+/* Slightly larger gap for a sleek look without changing your grid structure */
+.products-grid.products-grid--home {
+  gap: 18px;
+}
+
+/* Clean skeleton placeholders sized to your cards */
+.product-skeleton {
+  width: 100%;
+  height: 300px;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #f3f3f3 25%, #ececec 37%, #f3f3f3 63%);
+  background-size: 400% 100%;
+  animation: shine 1.2s ease-in-out infinite;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+}
+
+/* Load more area centered with tasteful spacing */
+.home-load-more {
+  text-align: center;
+  margin-top: 16px;
+}
+
+/* Sleek button that matches neutral theme */
+.load-more-btn {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #111827;
+  font-weight: 600;
+  cursor: pointer;
+  transition: box-shadow 180ms ease, transform 180ms ease, background 180ms ease;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+.load-more-btn:hover {
+  background: #f9fafb;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+}
+.load-more-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* --- Spacing + Overlap fixes for product grid (non-breaking) --- */
+
+/* Ensure the grid is actually a grid and has consistent gaps */
+.products-grid {
+  display: grid;
+  grid-auto-rows: auto;
+  align-items: stretch;
+  gap: 18px;                 /* spacing between cards */
+  row-gap: 18px;
+  column-gap: 18px;
+  margin-top: 12px;          /* subtle breathing room above grid */
+}
+
+/* Responsive columns (keeps your visual style, just stabilizes layout) */
+@media (max-width: 639px) {
+  .products-grid { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+}
+@media (min-width: 640px) and (max-width: 1023px) {
+  .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+  .products-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* Make every direct child fill its grid cell to prevent overlap or wrapping bugs */
+.products-grid > * {
+  width: 100%;
+  min-width: 0;              /* prevents overflow from long titles/text */
+  box-sizing: border-box;
+}
+
+/* If ProductCard uses MUI Card or any root wrapper, force it to be fluid */
+.products-grid .MuiCard-root,
+.products-grid .product-card,
+.products-grid .card,
+.products-grid .card-root {
+  width: 100%;
+  height: 100%;
+}
+
+/* Images inside cards should never overflow their container */
+.products-grid img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Optional: keep skeleton placeholders consistent with cards */
+.product-skeleton {
+  width: 100%;
+  height: 300px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #f3f3f3 25%, #ececec 37%, #f3f3f3 63%);
+  background-size: 400% 100%;
+  animation: shine 1.2s ease-in-out infinite;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+}
+
+@keyframes shine {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

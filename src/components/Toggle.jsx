@@ -13,10 +13,10 @@ const App = () => {
   };
 
   const giftCategories = [
-    { value: 'flowers', label: 'Flowers', image: 'https://res.cloudinary.com/dgooittzu/image/upload/v1758901466/flower_icon_1_u0g53h.jpg', path: "/flowers" },
+    //{value: 'flowers', label: 'Flowers', image: 'https://res.cloudinary.com/dgooittzu/image/upload/v1758901466/flower_icon_1_u0g53h.jpg', path: "/flowers" },
     { value: 'jewelry', label: 'Jewelry', image: 'https://as2.ftcdn.net/jpg/03/14/33/33/1000_F_314333343_EKz9XQO4znMmMVaRBu9FX31MqXPvmIxr.jpg', path: "/accessories" },
     { value: 'softtoys', label: 'Soft Toys', image: 'https://res.cloudinary.com/dgooittzu/image/upload/v1758901545/soft_toy_icon_h1mzrz.webp', path: "/softtoys" },
-    { value: 'photoframe', label: 'Photo Frame', image: 'https://res.cloudinary.com/dgooittzu/image/upload/v1758901500/photo_frame_icon_po5ix8.jpg', path: "/photoframe" },
+    //{ value: 'photoframe', label: 'Photo Frame', image: 'https://res.cloudinary.com/dgooittzu/image/upload/v1758901500/photo_frame_icon_po5ix8.jpg', path: "/photoframe" },
   ];
 
   const theme = createTheme({
