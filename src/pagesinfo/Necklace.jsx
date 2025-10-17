@@ -70,7 +70,7 @@ function Necklace() {
               </Typography>
             </Stack>
 
-            <Stack
+            {/* <Stack
               direction="row"
               spacing={1}
               alignItems="center"
@@ -104,7 +104,64 @@ function Necklace() {
                 {isFetching ? "Refreshing..." : "Refresh"}
               </Button>
               <Chip label={`${products.length} items`} size="small" sx={{ bgcolor: "#f1f1f1" }} />
-            </Stack>
+            </Stack> */}
+
+            {/* Search + Buttons */}
+                        <Stack
+                          direction={{ xs: 'column', sm: 'row' }}
+                          spacing={1}
+                          alignItems="center"
+                          sx={{ width: { xs: '100%', sm: 'auto' } }}
+                        >
+                          <TextField
+                            value={q}
+                            onChange={(e) => setQ(e.target.value)}
+                            placeholder="Search soft toys..."
+                            size="small"
+                            fullWidth
+                            sx={{
+                              minWidth: { xs: '100%', sm: 260 },
+                              bgcolor: 'white',
+                              borderRadius: 2,
+                            }}
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  <SearchOutlinedIcon fontSize="small" />
+                                </InputAdornment>
+                              ),
+                            }}
+                          />
+            
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            onClick={() => {
+                              setQ('');
+                              refetch();
+                            }}
+                            startIcon={<RefreshRoundedIcon />}
+                            disabled={isFetching}
+                            sx={{
+                              textTransform: 'none',
+                              borderRadius: 2,
+                              px: 2,
+                              width: { xs: '100%', sm: 'auto' },
+                            }}
+                          >
+                            {isFetching ? 'Refreshing...' : 'Refresh'}
+                          </Button>
+            
+                          <Chip
+                            label={`${products.length} items`}
+                            size="small"
+                            sx={{
+                              bgcolor: '#f1f1f1',
+                              width: { xs: '100%', sm: 'auto' },
+                              textAlign: 'center',
+                            }}
+                          />
+                        </Stack>
           </Stack>
 
           {(isLoading || isFetching) && <LinearProgress sx={{ mb: 2 }} />}

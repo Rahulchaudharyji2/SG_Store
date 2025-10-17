@@ -29,13 +29,18 @@ function Necklace() {
   }, [q]);
 
   // Use the dedicated category endpoint
-  const { data, isLoading, isFetching, error, refetch } =
-    useGetProductsByCategoryQuery({
-      category: "Necklace",
-      q: debouncedQ || undefined,
-      limit: 50,
-      skip: 0,
-    });
+  const {
+    data,
+    isLoading,
+    isFetching,
+    error,
+    refetch,
+  } = useGetProductsByCategoryQuery({
+    category: "Necklace",
+    q: debouncedQ || undefined,
+    limit: 50,
+    skip: 0,
+  });
 
   const products = data?.products || [];
 
@@ -66,11 +71,12 @@ function Necklace() {
                 Necklaces
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Explore our necklace collection. Use search to quickly find items.
+                Explore our necklace collection. Use search to quickly find
+                items.
               </Typography>
             </Stack>
 
-            <Stack
+            {/* <Stack
               direction="row"
               spacing={1}
               alignItems="center"
@@ -104,6 +110,62 @@ function Necklace() {
                 {isFetching ? "Refreshing..." : "Refresh"}
               </Button>
               <Chip label={`${products.length} items`} size="small" sx={{ bgcolor: "#f1f1f1" }} />
+            </Stack> */}
+            {/* Search + Buttons */}
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={1}
+              alignItems="center"
+              sx={{ width: { xs: "100%", sm: "auto" } }}
+            >
+              <TextField
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="Search soft toys..."
+                size="small"
+                fullWidth
+                sx={{
+                  minWidth: { xs: "100%", sm: 260 },
+                  bgcolor: "white",
+                  borderRadius: 2,
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchOutlinedIcon fontSize="small" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={() => {
+                  setQ("");
+                  refetch();
+                }}
+                startIcon={<RefreshRoundedIcon />}
+                disabled={isFetching}
+                sx={{
+                  textTransform: "none",
+                  borderRadius: 2,
+                  px: 2,
+                  width: { xs: "100%", sm: "auto" },
+                }}
+              >
+                {isFetching ? "Refreshing..." : "Refresh"}
+              </Button>
+
+              <Chip
+                label={`${products.length} items`}
+                size="small"
+                sx={{
+                  bgcolor: "#f1f1f1",
+                  width: { xs: "100%", sm: "auto" },
+                  textAlign: "center",
+                }}
+              />
             </Stack>
           </Stack>
 
@@ -140,7 +202,8 @@ function Necklace() {
               <Grid item xs={12}>
                 <Box sx={{ textAlign: "center", py: 6 }}>
                   <Typography variant="body1" color="text.secondary">
-                    No necklaces found{debouncedQ ? ` for “${debouncedQ}”` : ""}.
+                    No necklaces found{debouncedQ ? ` for “${debouncedQ}”` : ""}
+                    .
                   </Typography>
                 </Box>
               </Grid>
