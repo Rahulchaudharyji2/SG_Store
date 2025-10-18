@@ -10,7 +10,7 @@ const DARK_TEXT = '#1E293B';   // Dark color for professional contrast
 // Product responses and Help Topic responses
 const SG_GIFTS_PRODUCTS = {
     'about': "Welcome to **SG Gifts** — where every gift is a piece of the heart. Our founder, **Sambhav Goyal**, curates each item with passion. We aim to honor life's moments with beautiful gifts. Follow our journey: **YouTube: Sambhav Goyal**, **Instagram: @sg_gifthub**.",
-    'products': "At **SG Gifts**, we offer **Jewellery, Photo Frames, Soft Toys, and Flowers** — perfect for every occasion.",
+    'products': "At **SG Gifts**, we offer **Jewellery and Soft Toys** — perfect for every occasion.",
     'terms': "By using our site, you accept our T&Cs. We offer a **3-day replacement** for manufacturing defects. For damage: **SG Team fault = Free replacement**. **Customer fault = No replacement**. See full policy details on our website.",
     'privacy': "We collect contact info (name, address, email) for orders and support. Interactions via our **24/7 chatbot** or **WhatsApp** may collect conversation history to ensure the best service, handled in accordance with our Privacy Policy.",
     'jewelry': "Our **Jewelry** collection features elegant necklaces, bracelets, and rings, perfect for any special occasion. Explore our **premium gold** and **diamond** pieces.",
@@ -166,8 +166,8 @@ const SgChatBot = () => {
         if (lowerInput.includes('return') || lowerInput.includes('exchange') || lowerInput.includes('refund') || lowerInput.includes('3 day')) return SG_GIFTS_PRODUCTS['returns'];
         if (lowerInput.includes('jewel') || lowerInput.includes('ring') || lowerInput.includes('necklace')) return SG_GIFTS_PRODUCTS['jewelry'];
         if (lowerInput.includes('soft toy') || lowerInput.includes('teddy') || lowerInput.includes('plush')) return SG_GIFTS_PRODUCTS['soft toys'];
-        if (lowerInput.includes('photo') || lowerInput.includes('frame') || lowerInput.includes('memory')) return SG_GIFTS_PRODUCTS['photo frames'];
-        if (lowerInput.includes('flower') || lowerInput.includes('bouquet') || lowerInput.includes('rose')) return SG_GIFTS_PRODUCTS['flowers'];
+        //if (lowerInput.includes('photo') || lowerInput.includes('frame') || lowerInput.includes('memory')) return SG_GIFTS_PRODUCTS['photo frames'];
+        //if (lowerInput.includes('flower') || lowerInput.includes('bouquet') || lowerInput.includes('rose')) return SG_GIFTS_PRODUCTS['flowers'];
         if (lowerInput.includes('wrap') || lowerInput.includes('personalize') || lowerInput.includes('message') || lowerInput.includes('gift service')) return SG_GIFTS_PRODUCTS['gifting'];
         if (lowerInput.includes('contact') || lowerInput.includes('support') || lowerInput.includes('help') || lowerInput.includes('whatsapp') || lowerInput.includes('mail')) return SG_GIFTS_PRODUCTS['contact'];
         if (lowerInput.includes('hi') || lowerInput.includes('hello') || lowerInput.includes('hey')) return "Hello! Welcome to **SG Gifts**. I can assist with product details, shipping, tracking, and policies. How may I assist your search today?";

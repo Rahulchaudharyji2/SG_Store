@@ -284,6 +284,10 @@ import Profile from './Pages/admin/ProfilePage';
 import SGWelcomeAnimation from './components/SGwelcome';
 import AdminLogin from './Pages/admin/LoginPage'; // new admin login page
 import BraceletWatch from './pagesinfo/BraceletWatch';
+import BuyNow from './Pages/BuyNow';
+import OrderSuccess from './Pages/OrderSuccess';
+import OTPVerification from './pages/OtpVerfication';
+
 
 function App() {
   const [showWelcome, setShowWelcome] = useState(true);
@@ -334,7 +338,10 @@ function App() {
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/braceletwatch" element={<BraceletWatch />} />
         <Route path="/productDetails/:id" element={<Productdetails />} />
+        <Route path="/buy-now" element={<BuyNow />} />
+        <Route path="/order-success" element={<OrderSuccess />} />
         <Route path="/register" element={<Register />} />
+  <Route path="/verify-otp" element={<OTPVerification />} />
 
         {/* Expose admin login route */}
         <Route path="/admin/login" element={<AdminLogin />} />

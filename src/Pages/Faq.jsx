@@ -8,7 +8,7 @@ function FAQPage() {
     },
     {
       q: "How fast can I get my order delivered?",
-      a: "Delivery takes 1–2 days. If your location is within 10 km, we’ll deliver within the same day. For any delay, you can contact us on WhatsApp Business for instant help.",
+      a: "Delivery takes 1–2 days. If your location is within 10 km, we’ll deliver within 24 hours. For any delay, you can contact us on WhatsApp Business for instant help.",
     },
     {
       q: "Do you provide same-day delivery?",
