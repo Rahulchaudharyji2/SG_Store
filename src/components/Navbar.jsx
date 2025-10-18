@@ -1,34 +1,32 @@
-
-
 import * as React from "react";
 import { styled, alpha } from "@mui/material/styles";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import InputBase from "@mui/material/InputBase";
-import Badge from "@mui/material/Badge";
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import MoreIcon from "@mui/icons-material/MoreVert";
-import Button from "@mui/material/Button";
-import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
-import Modal from "@mui/material/Modal";
-import CloseIcon from "@mui/icons-material/Close";
-import TextField from "@mui/material/TextField";
-import Select from "@mui/material/Select";
-import { MenuItem as SelectItem, CircularProgress, Paper, Divider } from "@mui/material";
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  IconButton,
+  Typography,
+  InputBase,
+  Badge,
+  MenuItem,
+  Menu,
+  Button,
+  CircularProgress,
+  Paper,
+  Divider,
+} from "@mui/material";
+import {
+  Search as SearchIcon,
+  AccountCircle,
+  MoreVert as MoreIcon,
+  ShoppingCartOutlined as ShoppingCartOutlinedIcon,
+} from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../Context/CardContext";
 import { useSelector } from "react-redux";
+import DeliveryModal from "./DeliveryModal";
 
-// Resolve API base: prefer VITE_API_URL, else use /api (with Vite proxy)
-const API_BASE = (import.meta.env.VITE_API_URL && String(import.meta.env.VITE_API_URL).replace(/\/+$/, "")) || "/api";
-
-// Styled search components
+// Styled Search
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -60,90 +58,23 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-// Delivery Modal
-const DeliveryModal = ({ open, handleClose }) => {
-  const [country, setCountry] = React.useState("India");
-  const handleCountryChange = (event) => setCountry(event.target.value);
+// Glass AppBar style
+const GlassAppBar = styled(AppBar)(({ theme }) => ({
+  backgroundColor: alpha("#EBCB90", 0.8), // semi-transparent original color
+  backdropFilter: "blur(10px)",           // glassy blur
+  boxShadow: "none",
+  borderBottom: "1px solid rgba(255, 255, 255, 0.2)",
+}));
 
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: { xs: "90%", sm: 400 },
-    bgcolor: "background.paper",
-    borderRadius: "16px",
-    boxShadow: 24,
-    p: 4,
-    outline: "none",
-  };
 
-  return (
-    <Modal open={open} onClose={handleClose}>
-      <Box sx={style}>
-        <IconButton
-          aria-label="close"
-          onClick={handleClose}
-          sx={{ position: "absolute", right: 8, top: 8, color: "grey.500" }}
-        >
-          <CloseIcon />
-        </IconButton>
-        <Box sx={{ textAlign: "center" }}>
-          <img
-            src="https://res.cloudinary.com/dgooittzu/image/upload/v1757567212/WhatsApp_Image_2025-09-10_at_2.11.31_PM-removebg-preview_esfx3s.png"
-            alt="Map icon"
-            style={{ width: "100px", height: "100px", margin: "0 auto" }}
-          />
-          <Typography variant="h6" sx={{ mt: 2, fontWeight: "bold" }}>
-            Where to deliver?
-          </Typography>
-          <Typography sx={{ mt: 1, color: "text.secondary" }}>
-            Enter location for personalized delivery choices
-          </Typography>
-        </Box>
-        <Box sx={{ mt: 3, display: "flex", gap: 1 }}>
-          <Select
-            value={country}
-            onChange={handleCountryChange}
-            sx={{ width: "40%", borderRadius: "8px", border: "1px solid #ccc" }}
-          >
-            <SelectItem value="India">
-              <img src="https://flagcdn.com/in.svg" alt="Indian flag" style={{ width: "24px", marginRight: "8px" }} />
-              India
-            </SelectItem>
-          </Select>
-          <TextField fullWidth label="Pincode / Location" variant="outlined" sx={{ width: "60%", borderRadius: "8px" }} />
-        </Box>
-        <Button
-          variant="contained"
-          fullWidth
-          sx={{
-            mt: 3,
-            borderRadius: "16px",
-            backgroundColor: "#FF5252",
-            "&:hover": { backgroundColor: "#E53935" },
-            py: 1.5,
-            fontWeight: "bold",
-          }}
-        >
-          APPLY
-        </Button>
-      </Box>
-    </Modal>
-  );
-};
-
-// Main Navbar
 export default function PrimarySearchAppBar() {
   const navigate = useNavigate();
   const { cart } = useCart();
   const cartNo = cart.length;
 
-  // Auth state
   const { isAuthenticated, user } = useSelector((s) => s.auth || {});
   const isAdmin = Boolean(isAuthenticated && user?.role === "admin");
 
-  // Menus and modal
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [openModal, setOpenModal] = React.useState(false);
@@ -160,7 +91,7 @@ export default function PrimarySearchAppBar() {
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
 
-  // Search states
+  // Search
   const [q, setQ] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [results, setResults] = React.useState([]);
@@ -168,40 +99,17 @@ export default function PrimarySearchAppBar() {
   const searchBoxRef = React.useRef(null);
   const debounceRef = React.useRef(null);
 
-  const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setQ(value);
-    if (!openResults) setOpenResults(true);
-  };
+  const API_BASE = (import.meta.env.VITE_API_URL || "/api").replace(/\/+$/, "");
 
-  const handleResultClick = (id) => {
-    setOpenResults(false);
-    setQ("");
-    setResults([]);
-    navigate(`/productDetails/${id}`);
-  };
-
-  const handleSearchSubmit = (e) => {
-    e?.preventDefault?.();
-    // If there are results, navigate to the first one; otherwise, just keep dropdown
-    if (results && results.length > 0) {
-      handleResultClick(results[0]._id);
-    }
-  };
-
-  // Click outside to close results
   React.useEffect(() => {
     const onDocClick = (e) => {
       if (!searchBoxRef.current) return;
-      if (!searchBoxRef.current.contains(e.target)) {
-        setOpenResults(false);
-      }
+      if (!searchBoxRef.current.contains(e.target)) setOpenResults(false);
     };
     document.addEventListener("mousedown", onDocClick);
     return () => document.removeEventListener("mousedown", onDocClick);
   }, []);
 
-  // Debounced search
   React.useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     if (!q || q.trim().length < 2) {
@@ -218,7 +126,7 @@ export default function PrimarySearchAppBar() {
         const data = await res.json();
         setResults(Array.isArray(data?.products) ? data.products : []);
       } catch (err) {
-        console.error("Search error:", err);
+        console.error(err);
         setResults([]);
       } finally {
         setLoading(false);
@@ -226,6 +134,13 @@ export default function PrimarySearchAppBar() {
     }, 350);
     return () => clearTimeout(debounceRef.current);
   }, [q]);
+
+  const handleResultClick = (id) => {
+    setOpenResults(false);
+    setQ("");
+    setResults([]);
+    navigate(`/productDetails/${id}`);
+  };
 
   // Desktop menu
   const menuId = "primary-search-account-menu";
@@ -241,13 +156,17 @@ export default function PrimarySearchAppBar() {
     >
       {isAdmin ? (
         <>
-          <MenuItem component={Link} to="/admin/profile" onClick={handleMenuClose}>Admin Profile</MenuItem>
-          <MenuItem component={Link} to="/admin/products" onClick={handleMenuClose}>Add Product</MenuItem>
+          <MenuItem component={Link} to="/admin/profile" onClick={handleMenuClose}>
+            Admin Profile
+          </MenuItem>
+          <MenuItem component={Link} to="/admin/products" onClick={handleMenuClose}>
+            Add Product
+          </MenuItem>
         </>
       ) : (
-        <>
-          <MenuItem component={Link} to="/admin/login" onClick={handleMenuClose}> Admin Login</MenuItem>
-        </>
+        <MenuItem component={Link} to="/admin/login" onClick={handleMenuClose}>
+          Admin Login
+        </MenuItem>
       )}
     </Menu>
   );
@@ -265,7 +184,7 @@ export default function PrimarySearchAppBar() {
       onClose={handleMobileMenuClose}
     >
       <MenuItem onClick={handleOpenModal}>
-        <Button variant="contained" sx={{ borderRadius: 2, width: "100%" }}>
+        <Button variant="contained" fullWidth sx={{ borderRadius: 2 }}>
           Where to deliver?
         </Button>
       </MenuItem>
@@ -293,49 +212,49 @@ export default function PrimarySearchAppBar() {
         </IconButton>
         <p>{isAdmin ? "Admin" : "Profile"}</p>
       </MenuItem>
+
+      {!isAdmin && (
+        <MenuItem component={Link} to="/admin/login" onClick={handleMobileMenuClose}>
+          <Typography>Admin Login</Typography>
+        </MenuItem>
+      )}
     </Menu>
   );
 
   return (
     <>
-      <Box sx={{ flexGrow: 1, marginBottom: "85px" }}>
-        <AppBar position="fixed" sx={{ backgroundColor: "#EBCB90" }}>
+      <Box sx={{ flexGrow: 1, mb: "85px" }}>
+        <GlassAppBar position="fixed">
           <Toolbar sx={{ flexWrap: "wrap", justifyContent: "space-between" }}>
             {/* Logo */}
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Typography component={Link} to="/" sx={{ display: "block" }}>
                 <img
-                  src="./logo.jpg"
+                  src="/logo.jpg"
                   alt="Logo"
-                  style={{
-                    height: typeof window !== "undefined" && window.innerWidth < 600 ? "40px" : "50px",
-                    borderRadius: "12px",
-                  }}
+                  style={{ height: window.innerWidth < 600 ? "40px" : "50px", borderRadius: "12px" }}
                 />
               </Typography>
             </Box>
 
-            {/* Search (with results dropdown) */}
+            {/* Search */}
             <Box ref={searchBoxRef} sx={{ position: "relative", flex: 1, maxWidth: { xs: "60%", md: "40vw" }, mx: 2 }}>
-              <form onSubmit={handleSearchSubmit}>
-                <Search sx={{ borderRadius: "20px", width: "100%", border: "solid black" }}>
-                  <SearchIconWrapper>
-                    <SearchIcon sx={{ color: "#37353E" }} />
-                  </SearchIconWrapper>
-                  <StyledInputBase
-                    placeholder="Search…"
-                    inputProps={{ "aria-label": "search" }}
-                    value={q}
-                    onChange={handleSearchChange}
-                    onFocus={() => q.trim().length >= 2 && setOpenResults(true)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Escape") setOpenResults(false);
-                    }}
-                  />
-                </Search>
-              </form>
+              <Search>
+                <SearchIconWrapper>
+                  <SearchIcon sx={{ color: "#37353E" }} />
+                </SearchIconWrapper>
+                <StyledInputBase
+                  placeholder="Search…"
+                  value={q}
+                  onChange={(e) => {
+                    setQ(e.target.value);
+                    if (!openResults) setOpenResults(true);
+                  }}
+                  onFocus={() => q.trim().length >= 2 && setOpenResults(true)}
+                />
+              </Search>
 
-              {/* Results dropdown */}
+              {/* Search results */}
               {openResults && (
                 <Paper
                   elevation={6}
@@ -359,40 +278,39 @@ export default function PrimarySearchAppBar() {
                   </Box>
                   <Divider />
                   <Box>
-                    {!loading && results.length === 0 && q.trim().length >= 2 ? (
-                      <Typography variant="body2" sx={{ p: 2, color: "text.secondary" }}>
-                        No results found
-                      </Typography>
-                    ) : (
-                      results.map((p) => (
-                        <Box
-                          key={p._id}
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1.5,
-                            p: 1.25,
-                            cursor: "pointer",
-                            "&:hover": { backgroundColor: alpha("#000", 0.04) },
-                          }}
-                          onClick={() => handleResultClick(p._id)}
-                        >
-                          <img
-                            src={Array.isArray(p.images) && p.images[0] ? p.images[0] : ""}
-                            alt=""
-                            style={{ width: 44, height: 44, objectFit: "cover", borderRadius: 6, background: "#f5f5f5" }}
-                          />
-                          <Box sx={{ minWidth: 0 }}>
-                            <Typography variant="body2" noWrap title={p.title}>
-                              {p.title}
-                            </Typography>
-                            <Typography variant="caption" sx={{ color: "text.secondary" }} noWrap title={p.category}>
-                              {p.category} • ₹{p.price}
-                            </Typography>
+                    {!loading &&
+                      (results.length === 0 ? (
+                        <Typography sx={{ p: 2, color: "text.secondary" }}>No results found</Typography>
+                      ) : (
+                        results.map((p) => (
+                          <Box
+                            key={p._id}
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1.5,
+                              p: 1.25,
+                              cursor: "pointer",
+                              "&:hover": { backgroundColor: alpha("#000", 0.04) },
+                            }}
+                            onClick={() => handleResultClick(p._id)}
+                          >
+                            <img
+                              src={p.images?.[0] || ""}
+                              alt=""
+                              style={{ width: 44, height: 44, objectFit: "cover", borderRadius: 6, background: "#f5f5f5" }}
+                            />
+                            <Box sx={{ minWidth: 0 }}>
+                              <Typography variant="body2" noWrap>
+                                {p.title}
+                              </Typography>
+                              <Typography variant="caption" sx={{ color: "text.secondary" }} noWrap>
+                                {p.category} • ₹{p.price}
+                              </Typography>
+                            </Box>
                           </Box>
-                        </Box>
-                      ))
-                    )}
+                        ))
+                      ))}
                   </Box>
                 </Paper>
               )}
@@ -400,43 +318,22 @@ export default function PrimarySearchAppBar() {
 
             <Box sx={{ flexGrow: 1 }} />
 
-            {/* Desktop actions */}
+            {/* Desktop buttons */}
             <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}>
               <Button
                 variant="contained"
-                sx={{
-                  borderRadius: "20px",
-                  backgroundColor: "#EBCB90",
-                  color: "#37353E",
-                  marginRight: 1,
-                  padding: "8px 16px",
-                  fontWeight: "bold",
-                  boxShadow: "none",
-                  border: "1px solid #37353E",
-                  "&:hover": { border: "1px solid #37353E", boxShadow: "none" },
-                }}
+                sx={{ borderRadius: "20px", backgroundColor: "#EBCB90", color: "#37353E", mr: 1 }}
                 onClick={handleOpenModal}
               >
-                <img src="https://flagcdn.com/in.svg" alt="Indian flag" style={{ width: "24px", marginRight: "8px" }} />
-                <span style={{ backgroundColor: "#fff", padding: "4px 8px", borderRadius: "10px" }}>
-                  Where to deliver?
-                </span>
+                Where to deliver?
               </Button>
 
-              {/* Admin-only: Add Product */}
               {isAdmin && (
                 <Button
                   component={Link}
                   to="/admin/products"
                   variant="outlined"
-                  sx={{
-                    borderRadius: "20px",
-                    color: "#37353E",
-                    borderColor: "#37353E",
-                    ml: 1,
-                    fontWeight: "bold",
-                    "&:hover": { borderColor: "#37353E" },
-                  }}
+                  sx={{ borderRadius: "20px", color: "#37353E", borderColor: "#37353E", ml: 1 }}
                 >
                   Add Product
                 </Button>
@@ -447,6 +344,7 @@ export default function PrimarySearchAppBar() {
                   <ShoppingCartOutlinedIcon />
                 </Badge>
               </IconButton>
+
               <IconButton size="large" edge="end" color="inherit" onClick={handleProfileMenuOpen} sx={{ ml: 2 }}>
                 <AccountCircle />
               </IconButton>
@@ -456,7 +354,6 @@ export default function PrimarySearchAppBar() {
             <Box sx={{ display: { xs: "flex", md: "none" } }}>
               <IconButton
                 size="large"
-                aria-label="show more"
                 aria-controls={mobileMenuId}
                 aria-haspopup="true"
                 onClick={handleMobileMenuOpen}
@@ -465,9 +362,8 @@ export default function PrimarySearchAppBar() {
               </IconButton>
             </Box>
           </Toolbar>
-        </AppBar>
+        </GlassAppBar>
 
-        {/* Menus and Modal */}
         {renderMobileMenu}
         {renderMenu}
         <DeliveryModal open={openModal} handleClose={handleCloseModal} />
