@@ -1,6 +1,4 @@
 
-
-
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DeliveryForm from "../components/DeliveryForm";
@@ -9,15 +7,13 @@ import { buyNow, confirmPayment as apiConfirmPayment } from "../store/Api";
 import { loadRazorpayScript } from "../utils/razorpay";
 
 /**
- * Professional BuyNow / Checkout page (padding improved)
- * - Increased inner padding between borders and content for clearer spacing
- * - Kept existing logic intact
+ * Professional BuyNow / Checkout page
+ * - Improved spacing and responsiveness
+ * - Preserves existing business logic
  */
 
 function formatINR(value = 0) {
-  return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 2 })
-    .format(value)
-    .replace("₹", "₹");
+  return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 2 }).format(value);
 }
 
 export default function BuyNow() {
@@ -38,7 +34,7 @@ export default function BuyNow() {
     pincode: "",
     country: "India",
   });
-  const [paymentMethod, setPaymentMethod] = useState("cod"); // 'cod' or 'razorpay'
+  const [paymentMethod, setPaymentMethod] = useState("cod");
   const [verifyPhone, setVerifyPhone] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -153,18 +149,17 @@ export default function BuyNow() {
   const grandTotal = +(clientSubtotal + shipping + taxes).toFixed(2);
 
   return (
-    <div className="max-w-6xl mx-auto py-10 px-4">
-      <div className="mb-6">
-        <h1 className="text-3xl font-semibold text-gray-900">Checkout</h1>
-        <p className="text-sm text-gray-600 mt-2">Review your items, enter delivery details and complete your order.</p>
-      </div>
+    <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <header className="mb-8">
+        <h1 className="text-3xl font-extrabold text-gray-900">Checkout</h1>
+        <p className="text-sm text-gray-600 mt-1">Review items, enter delivery details and complete your order.</p>
+      </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left column: items + delivery form */}
-        <div className="lg:col-span-8 space-y-6 p-3">
-          <section className="bg-white shadow rounded-lg p-3">
-            {/* Increased padding inside the bordered card */}
-            <div className="p-8">
+        {/* Left: Items + Delivery */}
+        <main className="lg:col-span-8 space-y-6">
+          <section className="bg-white border border-gray-100 rounded-lg shadow-sm overflow-hidden" >
+            <div className="p-6" style={{ padding: '2rem' }}>
               <h2 className="text-lg font-medium text-gray-800 mb-4">Items ({items.length})</h2>
 
               {items.length === 0 ? (
@@ -177,11 +172,8 @@ export default function BuyNow() {
               ) : (
                 <ul className="space-y-4">
                   {items.map((it) => (
-                    <li
-                      key={it.id || it._id || it.productId}
-                      className="flex gap-4 items-center border rounded-lg p-4" /* increased padding and rounded-lg */
-                    >
-                      <div className="w-24 h-24 bg-gray-50 rounded overflow-hidden flex items-center justify-center p-2">
+                    <li key={it.id || it._id || it.productId} className="flex gap-4 items-center border border-gray-100 rounded-lg p-4">
+                      <div className="w-24 h-24 bg-gray-50 rounded overflow-hidden flex items-center justify-center p-2 shrink-0">
                         {it.image ? (
                           <img src={it.image} alt={it.title || it.name} className="w-full h-full object-cover" />
                         ) : (
@@ -191,7 +183,7 @@ export default function BuyNow() {
 
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-start">
-                          <div>
+                          <div className="truncate">
                             <div className="text-sm font-medium text-gray-900 truncate">{it.title || it.name || "Product"}</div>
                             <div className="text-xs text-gray-500 mt-1">{it.variant || ""}</div>
                           </div>
@@ -203,14 +195,14 @@ export default function BuyNow() {
                           <div className="flex items-center gap-3">
                             <button
                               aria-label={`Decrease quantity for ${it.title || it.name}`}
-                              className="px-3 py-1 rounded border text-sm text-gray-600"
+                              className="px-3 py-1 rounded border text-sm text-gray-600 hover:bg-gray-50"
                               onClick={() => cart.dispatch({ type: "DECREASE", payload: it.id || it.productId })}
                             >
                               -
                             </button>
                             <button
                               aria-label={`Increase quantity for ${it.title || it.name}`}
-                              className="px-3 py-1 rounded border text-sm text-gray-600"
+                              className="px-3 py-1 rounded border text-sm text-gray-600 hover:bg-gray-50"
                               onClick={() => cart.dispatch({ type: "INCREASE", payload: it.id || it.productId })}
                             >
                               +
@@ -237,21 +229,23 @@ export default function BuyNow() {
             </div>
           </section>
 
-          <section className="bg-white shadow rounded-lg mt-5">
-            <div className="p-8">
-              <h2 className="text-lg font-medium text-gray-800 mb-4 p-4">Delivery Details</h2>
+          <section className="bg-white border border-gray-100 rounded-lg shadow-sm">
+            <div className="p-6" style={{ padding: '2rem' }}>
+              <h2 className="text-lg font-medium text-gray-800 mb-4">Delivery Details</h2>
               <form onSubmit={handleSubmit} id="checkout-form">
-                <DeliveryForm value={delivery} onChange={setDelivery} />
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <DeliveryForm value={delivery} onChange={setDelivery} />
+                </div>
               </form>
             </div>
           </section>
-        </div>
+        </main>
 
-        {/* Right column: order summary & payment */}
+        {/* Right: Summary & Payment */}
         <aside className="lg:col-span-4">
-          <div className="lg:sticky lg:top-24 space-y-4">
-            <div className="bg-white shadow rounded-lg p-3">
-              <div className="p-6">
+          <div className="space-y-4 lg:sticky lg:top-28">
+            <div className="bg-white border border-gray-100 rounded-lg shadow-sm overflow-hidden">
+              <div className="p-6" style={{ padding: '2rem' }}>
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Order Summary</h3>
 
                 <div className="flex justify-between text-sm text-gray-600">
@@ -278,13 +272,13 @@ export default function BuyNow() {
               </div>
             </div>
 
-            <div className="bg-white shadow rounded-lg mt-3">
-              <div className="p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4 p-3">Payment</h3>
+            <div className="bg-white border border-gray-100 rounded-lg shadow-sm overflow-hidden">
+              <div className="p-6" style={{ padding: '2rem' }}>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Payment</h3>
 
-                <div className="space-y-3 p-3">
-                  <label className={`block p-4 rounded-lg border ${paymentMethod === "cod" ? "border-indigo-500 bg-indigo-50" : "border-gray-200 bg-white"}`}>
-                    <div className="flex items-start gap-3 ">
+                <div className="space-y-3">
+                  <label className={`block p-3 rounded-lg border ${paymentMethod === "cod" ? "border-indigo-500 bg-indigo-50" : "border-gray-200 bg-white"}`}>
+                    <div className="flex items-start gap-3">
                       <input
                         type="radio"
                         name="payment"
@@ -292,16 +286,16 @@ export default function BuyNow() {
                         checked={paymentMethod === "cod"}
                         onChange={() => setPaymentMethod("cod")}
                         className="mt-1"
-                        aria-label="Pay with Cash on Delivery"
+                        aria-label="Cash on Delivery"
                       />
                       <div>
-                        <div className="font-medium text-gray-900 ">Cash on Delivery</div>
-                        <div className="text-sm text-gray-600">Pay with cash at delivery.</div>
+                        <div className="font-medium text-gray-900">Cash on Delivery</div>
+                        <div className="text-sm text-gray-600">Pay with cash when your order is delivered.</div>
                       </div>
                     </div>
                   </label>
 
-                  <label className={`block p-3 rounded-lg border m-3 ${paymentMethod === "razorpay" ? "border-indigo-500 bg-indigo-50" : "border-gray-200 bg-white"}`}>
+                  <label className={`block p-3 rounded-lg border ${paymentMethod === "razorpay" ? "border-indigo-500 bg-indigo-50" : "border-gray-200 bg-white"}`}>
                     <div className="flex items-start gap-3">
                       <input
                         type="radio"
@@ -314,7 +308,7 @@ export default function BuyNow() {
                       />
                       <div>
                         <div className="font-medium text-gray-900">Pay Online (Razorpay)</div>
-                        <div className="text-sm text-gray-600">Secure online payment with cards, UPI & netbanking.</div>
+                        <div className="text-sm text-gray-600">Secure payment via cards, UPI & netbanking.</div>
                       </div>
                     </div>
                   </label>
@@ -331,11 +325,14 @@ export default function BuyNow() {
                   type="submit"
                   form="checkout-form"
                   disabled={loading}
-                  className="w-full mt-4 flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-md transition disabled:opacity-60"
+                  className="w-full mt-4 inline-flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-md transition disabled:opacity-60"
                 >
                   {loading ? (
                     <>
-                      <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8z"></path></svg>
+                      <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8z" />
+                      </svg>
                       <span>Processing...</span>
                     </>
                   ) : (
@@ -353,14 +350,14 @@ export default function BuyNow() {
               </div>
             </div>
 
-            <div className="text-xs text-gray-500 text-center">
+            <p className="text-xs text-gray-500 text-center">
               By placing the order you agree to our <button className="underline">Terms & Conditions</button> and <button className="underline">Privacy Policy</button>.
-            </div>
+            </p>
           </div>
         </aside>
       </div>
 
-      {/* Error modal / toast */}
+      {/* Error toast */}
       {showError && (
         <div className="fixed inset-0 z-50 flex items-end lg:items-center justify-center p-4 pointer-events-none">
           <div className="max-w-xl w-full pointer-events-auto">
