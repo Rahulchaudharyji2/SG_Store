@@ -40,6 +40,12 @@ export default function BuyNow() {
   const [error, setError] = useState(null);
   const [showError, setShowError] = useState(false);
 
+  // Coupon state
+  const [couponCode, setCouponCode] = useState("");
+  const [discount, setDiscount] = useState(0);
+  const [couponMessage, setCouponMessage] = useState("");
+  const [couponError, setCouponError] = useState("");
+
   useEffect(() => {
     if (!location.state?.items?.length) {
       setItems(cart.items || []);
@@ -94,6 +100,28 @@ export default function BuyNow() {
     rzp.open();
   }
 
+
+
+  const handleApplyCoupon = () => {
+    setCouponMessage("");
+    setCouponError("");
+    setDiscount(0);
+
+    if (!couponCode.trim()) {
+      setCouponError("Please enter a coupon code");
+      return;
+    }
+
+    if (couponCode.trim().toLowerCase() === "valentine20") {
+      const subtotal = (items || []).reduce((s, it) => s + (Number(it.price || 0) * Number(it.quantity || 1)), 0);
+      const discountAmount = subtotal * 0.20; // 20% off
+      setDiscount(discountAmount);
+      setCouponMessage("Coupon applied! 20% off");
+    } else {
+      setCouponError("Invalid coupon code");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
@@ -143,10 +171,11 @@ export default function BuyNow() {
     }
   };
 
+
   const clientSubtotal = (items || []).reduce((s, it) => s + (Number(it.price || 0) * Number(it.quantity || 1)), 0);
   const shipping = 0;
   const taxes = +(clientSubtotal * 0.0).toFixed(2);
-  const grandTotal = +(clientSubtotal + shipping + taxes).toFixed(2);
+  const grandTotal = +(clientSubtotal + shipping + taxes - discount).toFixed(2);
 
   return (
     <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
@@ -261,6 +290,34 @@ export default function BuyNow() {
                 <div className="flex justify-between text-sm text-gray-600 mt-2">
                   <div>Taxes</div>
                   <div>{formatINR(taxes)}</div>
+                </div>
+
+                {discount > 0 && (
+                  <div className="flex justify-between text-sm text-green-600 mt-2 font-medium">
+                    <div>Discount (20%)</div>
+                    <div>-{formatINR(discount)}</div>
+                  </div>
+                )}
+
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <div className="flex gap-2 items-center flex-wrap sm:flex-nowrap">
+                    <input
+                      type="text"
+                      placeholder="Coupon Code"
+                      className="flex-1 w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleApplyCoupon}
+                      className="bg-gray-900 text-white px-4 py-2 rounded-md text-sm hover:bg-gray-800 transition shrink-0 whitespace-nowrap"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                  {couponMessage && <p className="text-xs text-green-600 mt-1">{couponMessage}</p>}
+                  {couponError && <p className="text-xs text-red-600 mt-1">{couponError}</p>}
                 </div>
 
                 <hr className="my-4" />

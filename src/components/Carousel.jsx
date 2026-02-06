@@ -16,7 +16,7 @@ function ControlledCarousel() {
         <Carousel.Item>
           <img
             className="d-block w-100 carousel-img"
-            src="https://res.cloudinary.com/dgooittzu/image/upload/v1758702292/banner_for_front_page_2_uuksfj.png"
+            src="https://res.cloudinary.com/dgooittzu/image/upload/v1757567030/WhatsApp_Image_2025-09-09_at_12.22.39_PM_pn9yk2.jpg"
             alt="First slide"
           />
         
@@ -25,7 +25,7 @@ function ControlledCarousel() {
         <Carousel.Item>
           <img
             className="d-block w-100 carousel-img"
-            src="https://res.cloudinary.com/dgooittzu/image/upload/v1758609471/banner_for_front_page_o4qldz.jpg"
+            src="https://res.cloudinary.com/dgooittzu/image/upload/v1757581963/WhatsApp_Image_2025-09-11_at_2.40.02_PM_c26uh5.jpg"
             alt="Second slide"
           />
          
@@ -34,7 +34,7 @@ function ControlledCarousel() {
         <Carousel.Item>
           <img
             className="d-block w-100 carousel-img"
-            src="https://res.cloudinary.com/dgooittzu/image/upload/v1758716989/banner_3_front_w2e0it.png"
+            src="https://res.cloudinary.com/dgooittzu/image/upload/v1770284790/bannerrrrr_dsjt02.png"
             alt="Third slide"
           />
         

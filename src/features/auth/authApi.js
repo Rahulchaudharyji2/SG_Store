@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://sg-backend-iota.vercel.app/' || 'http://localhost:5000',
+    baseUrl: import.meta.env.VITE_API_URL || 'http://localhost:5000',
     credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.token;

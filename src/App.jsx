@@ -35,14 +35,11 @@
 // // import ProtectedRoute from './components/ProtectedRoutes';
 // // import Profile from './components/Profile';
 
-
-
 // // // 👇 popup animation component
 // // import SGWelcomeAnimation from './components/SGwelcome';
 
 // // function App() {
 // //   const [showWelcome, setShowWelcome] = useState(true);
-
 
 // //   useEffect(() => {
 // //     const timer = setTimeout(() => setShowWelcome(false), 5000);
@@ -248,46 +245,45 @@
 // }
 
 // export default App;
-import './App.css'
+import "./App.css";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Navbar from './components/Navbar'
-import SoftToys from './Pages/SoftToys'
-import Cart from './Pages/Cart'
-import Home from './Pages/Home';
-import Accessories from './Pages/Accessories';
-import Necklace from './Pages/Necklace';
-import Rings from './pagesinfo/Ring';
-import Earring from './pagesinfo/Earring';
-import Bracelt from './pagesinfo/Bracelt';
-import Sets from './pagesinfo/Sets';
-import BraceltWatch from './pagesinfo/BraceletWatch';
-import PhotoFrame from './Pages/PhotoFrame';
-import Flower from './Pages/Flower';
-import Footer from './components/Footer';
-import Pendants from './pagesinfo/Pendant';
-import PrivacyPolicy from './Pages/PrivacyPolicy';
-import TermsAndPolicyPage from './Pages/TermAndPolicy';
-import ContactUsPage from './Pages/ContactUs';
+import Navbar from "./components/Navbar";
+import SoftToys from "./Pages/SoftToys";
+import Cart from "./Pages/Cart";
+import Home from "./Pages/Home";
+import Accessories from "./Pages/Accessories";
+import Necklace from "./Pages/Necklace";
+import Rings from "./pagesinfo/Ring";
+import Earring from "./pagesinfo/Earring";
+import Bracelt from "./pagesinfo/Bracelt";
+import Sets from "./pagesinfo/Sets";
+import BraceltWatch from "./pagesinfo/BraceletWatch";
+import PhotoFrame from "./Pages/PhotoFrame";
+import Flower from "./Pages/Flower";
+import Footer from "./components/Footer";
+import Pendants from "./pagesinfo/Pendant";
+import PrivacyPolicy from "./Pages/PrivacyPolicy";
+import TermsAndPolicyPage from "./Pages/TermAndPolicy";
+import ContactUsPage from "./Pages/ContactUs";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ScrollToTop from './components/ScrollTop';
-import AboutUs from './components/AboutUs';
-import FAQPage from './Pages/Faq';
-import SgChatBot from './components/SgChatBot';
-import Productdetails from './components/Productdetails';
-import Register from './Pages/RegisterPage';
-import Login from './Pages/Login'; // this is the Login file above
-import AddProduct from './Pages/admin/ProductPage';
-import ProtectedRoute from './components/ProtectedRoutes';
-import Profile from './Pages/admin/ProfilePage';
-import SGWelcomeAnimation from './components/SGwelcome';
-import AdminLogin from './Pages/admin/LoginPage'; // new admin login page
-import BraceletWatch from './pagesinfo/BraceletWatch';
-import BuyNow from './Pages/BuyNow';
-import OrderSuccess from './Pages/OrderSuccess';
-import OTPVerification from './pages/OtpVerfication';
-
+import ScrollToTop from "./components/ScrollTop";
+import AboutUs from "./components/AboutUs";
+import FAQPage from "./Pages/Faq";
+import SgChatBot from "./components/SgChatBot";
+import Productdetails from "./components/Productdetails";
+import Register from "./Pages/RegisterPage";
+import Login from "./Pages/Login"; // this is the Login file above
+import AddProduct from "./Pages/admin/ProductPage";
+import ProtectedRoute from "./components/ProtectedRoutes";
+import Profile from "./Pages/admin/ProfilePage";
+import SGWelcomeAnimation from "./components/SGwelcome";
+import AdminLogin from "./Pages/admin/LoginPage"; // new admin login page
+import BraceletWatch from "./pagesinfo/BraceletWatch";
+import BuyNow from "./Pages/BuyNow";
+import OrderSuccess from "./Pages/OrderSuccess";
+import OTPVerification from "./Pages/OtpVerfication";
 
 function App() {
   const [showWelcome, setShowWelcome] = useState(true);
@@ -341,7 +337,7 @@ function App() {
         <Route path="/buy-now" element={<BuyNow />} />
         <Route path="/order-success" element={<OrderSuccess />} />
         <Route path="/register" element={<Register />} />
-  <Route path="/verify-otp" element={<OTPVerification />} />
+        <Route path="/verify-otp" element={<OTPVerification />} />
 
         {/* Expose admin login route */}
         <Route path="/admin/login" element={<AdminLogin />} />
@@ -349,7 +345,7 @@ function App() {
         <Route path="/admin/login" element={<Login />} />
 
         {/* Protected Admin */}
-        <Route element={<ProtectedRoute roles={['admin']} />}>
+        <Route element={<ProtectedRoute roles={["admin"]} />}>
           <Route path="/admin/profile" element={<Profile />} />
           <Route path="/admin/products" element={<AddProduct />} />
         </Route>
@@ -366,7 +362,7 @@ function App() {
         .animate-fadeIn { animation: fadeIn 0.5s ease-in-out; }
       `}</style>
     </>
-  )
+  );
 }
 
 export default App;
